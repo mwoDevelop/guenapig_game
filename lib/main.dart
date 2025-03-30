@@ -129,6 +129,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   int _lives = 3; // Dodajemy życia
   int _currentLevel = 1;
   final int _scoreToLevelUp = 100;
+  int _nextLevelScoreThreshold = 100; // Próg do następnego poziomu
   final int _initialFoodCount = 3;
   final Duration _initialWishDuration = const Duration(seconds: 5);
   Duration _currentWishDuration = const Duration(seconds: 5);
@@ -176,6 +177,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _currentLevel = 1;
       _score = 0;
       _lives = 3; // Resetuj życia
+      _nextLevelScoreThreshold = _scoreToLevelUp; // Resetuj próg
       _currentWishDuration = _initialWishDuration;
       _isLevelingUp = false;
       _generateOrbitingFood(_calculateFoodCountForLevel(_currentLevel));
@@ -253,10 +255,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       int timeBonus = (remainingTimeFraction * 10).round();
       int pointsEarned = 10 + timeBonus;
       int newScore = _score + pointsEarned;
-      // Zmieniony warunek level up - sprawdza skumulowany próg dla danego poziomu
-      bool leveledUp = newScore >= (_currentLevel * _scoreToLevelUp);
+      // Zmieniony warunek level up - używa progu _nextLevelScoreThreshold
+      bool leveledUp = newScore >= _nextLevelScoreThreshold;
       setState(() { _score = newScore; });
       print('Dobrze! Punkty: $_score (Bonus: $timeBonus)');
+      print('Checking level up: newScore ($newScore) >= threshold ($_nextLevelScoreThreshold) = $leveledUp'); // Zaktualizowano log
       if (leveledUp) { _levelUp(); }
       else { _changeWish(); }
     } else {
@@ -280,6 +283,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       if (!mounted) return;
       setState(() {
         _currentLevel++;
+        _nextLevelScoreThreshold = _currentLevel * _scoreToLevelUp; // Aktualizuj próg na następny poziom
+        print('Level up complete. New level: $_currentLevel, Score is now: $_score, Next threshold: $_nextLevelScoreThreshold'); // Zaktualizowano log
         // _score = 0; // Usunięto resetowanie punktów
         int newDurationMillis = (_currentWishDuration.inMilliseconds * 0.9).round();
         _currentWishDuration = Duration(milliseconds: max(1000, newDurationMillis));
