@@ -344,74 +344,93 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-                SizedBox(
-                  height: 80,
-                  child: (_currentWish != null && !_isLevelingUp)
-                    ? Transform.translate(
-                        offset: const Offset(-5.0, 0.0),
-                        child: Center(
-                          child: Transform.rotate(
-                            angle: pi / 2,
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                              decoration: BoxDecoration(
-                               color: Colors.white.withOpacity(0.9),
-                               borderRadius: BorderRadius.circular(20),
-                               border: Border.all(color: Colors.grey.shade400),
-                                boxShadow: [ BoxShadow( color: Colors.black.withOpacity(0.1), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 1), ), ],
-                             ),
-                              child: Transform.rotate(
-                                angle: -pi / 2,
-                                child: Text(_currentWish!.emoji, style: const TextStyle(fontSize: 26)), // Zmniejszony rozmiar emoji
+          // Grupa: Chmurka + Pasek Cierpliwości + Świnka (wyśrodkowana przez Stack i przesunięta)
+          Transform.translate( // Dodano Transform.translate do przesunięcia grupy
+            offset: const Offset(0.0, 20.0), // Przesunięcie w dół o 20 pikseli
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // Aby Column zajmował tylko potrzebne miejsce
+              children: [
+                 // Wyświetlanie aktualnego życzenia w chmurce (przeniesione tutaj)
+                 // Ukryj chmurkę podczas level up
+                  // Dodajemy SizedBox, aby zarezerwować miejsce nawet gdy chmurka jest ukryta
+                  SizedBox(
+                    // Zwiększamy wysokość, aby zmieścić obróconą chmurkę
+                    height: 80,
+                    child: (_currentWish != null && !_isLevelingUp)
+                      // Dodajemy Transform.translate wokół Center, aby precyzyjnie przesunąć
+                      ? Transform.translate(
+                          // Przesuwamy lekko w lewo (ujemna wartość X)
+                          offset: const Offset(-5.0, 0.0), // Dostosuj wartość przesunięcia
+                          child: Center(
+                            child: Transform.rotate( // Obracamy całą chmurkę
+                              angle: pi / 2, // Obrót o 90 stopni
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 12),
+                                // Dostosowujemy padding do obróconego kształtu
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                decoration: BoxDecoration(
+                                 color: Colors.white.withOpacity(0.9),
+                                 borderRadius: BorderRadius.circular(20), // Można dostosować dla lepszego efektu
+                                 border: Border.all(color: Colors.grey.shade400),
+                                  boxShadow: [ BoxShadow( color: Colors.black.withOpacity(0.1), spreadRadius: 1, blurRadius: 2, offset: const Offset(0, 1), ), ],
+                               ),
+                                child: Transform.rotate( // Obracamy tekst z powrotem
+                                 angle: -pi / 2, // Obrót o -90 stopni
+                                 child: Text(_currentWish!.emoji, style: const TextStyle(fontSize: 26)), // Zmniejszony rozmiar emoji
+                                ),
                               ),
                             ),
-                          ),
-                         ),
-                      )
-                   : null,
-               ),
-               SizedBox(
-                 height: patienceBarHeight + 5,
-                 child: (!_isLevelingUp)
-                   ? AnimatedBuilder(
-                       animation: _patienceAnimationController,
-                       builder: (context, child) {
-                         return Container(
-                           width: patienceBarWidth,
-                           height: patienceBarHeight,
-                           margin: const EdgeInsets.only(bottom: 5),
-                           child: ClipRRect(
-                             borderRadius: BorderRadius.circular(patienceBarHeight / 2),
-                             child: LinearProgressIndicator(
-                               value: _patienceAnimationController.value,
-                               backgroundColor: Colors.grey[300],
-                               valueColor: AlwaysStoppedAnimation<Color>(
-                                 _patienceAnimationController.value > 0.5 ? Colors.green : _patienceAnimationController.value > 0.2 ? Colors.orange : Colors.red,
-                               ),
-                               minHeight: patienceBarHeight,
-                             ),
                            ),
-                         );
-                       },
-                     )
-                   : null,
-               ),
-               Container(
-                 width: guineaPigSize,
-                 height: guineaPigSize,
-                 decoration: BoxDecoration(
-                   color: Colors.brown[300],
-                   shape: BoxShape.circle,
-                   boxShadow: [ BoxShadow( color: Colors.black.withOpacity(0.2), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 2), ), ],
+                        )
+                     : null, // Nie pokazuj nic, jeśli nie ma życzenia lub jest level up
                  ),
-                 child: const Center(child: Text('🐹', style: TextStyle(fontSize: 40))),
-               ),
-            ],
+
+                 // Pasek Cierpliwości (widoczny tylko gdy nie ma level up)
+                 // Dodajemy SizedBox, aby zarezerwować miejsce nawet gdy pasek jest ukryty
+                 SizedBox(
+                   height: patienceBarHeight + 5, // Wysokość paska + margines
+                   child: (!_isLevelingUp)
+                     ? AnimatedBuilder(
+                         animation: _patienceAnimationController,
+                         builder: (context, child) {
+                           return Container(
+                             width: patienceBarWidth,
+                             height: patienceBarHeight,
+                             margin: const EdgeInsets.only(bottom: 5), // Odstęp od świnki
+                             child: ClipRRect( // Zaokrąglamy rogi paska
+                               borderRadius: BorderRadius.circular(patienceBarHeight / 2),
+                               child: LinearProgressIndicator(
+                                 value: _patienceAnimationController.value, // Wartość od 0.0 do 1.0
+                                 backgroundColor: Colors.grey[300],
+                                 valueColor: AlwaysStoppedAnimation<Color>(
+                                   // Zmieniaj kolor paska w zależności od pozostałego czasu
+                                   _patienceAnimationController.value > 0.5 ? Colors.green : _patienceAnimationController.value > 0.2 ? Colors.orange : Colors.red,
+                                 ),
+                                 minHeight: patienceBarHeight,
+                               ),
+                             ),
+                           );
+                         },
+                       )
+                     : null, // Nie pokazuj nic podczas level up
+                 ),
+                 // Świnka
+                 Container(
+                   width: guineaPigSize,
+                   height: guineaPigSize,
+                   decoration: BoxDecoration(
+                     color: Colors.brown[300],
+                     shape: BoxShape.circle,
+                     boxShadow: [ BoxShadow( color: Colors.black.withOpacity(0.2), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, 2), ), ],
+                   ),
+                   child: const Center(child: Text('🐹', style: TextStyle(fontSize: 40))),
+                 ),
+              ],
+            ),
           ),
+
+
+          // Animowane jedzenie na orbicie
           if (!_isLevelingUp)
             AnimatedBuilder(
               animation: _orbitAnimationController,
@@ -421,6 +440,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 );
               },
             ),
+
+          // Wyświetlanie Poziomu i Punktacji
           Positioned(
             top: 10,
             left: 10,
@@ -433,6 +454,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               ),
             ),
           ),
+
+          // Komunikat "Level Up!"
           if (_isLevelingUp)
             Center(
               child: Container(
@@ -449,6 +472,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 ),
               ),
             ),
+
         ],
       ),
     );
