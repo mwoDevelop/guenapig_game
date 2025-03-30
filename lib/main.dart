@@ -279,7 +279,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       if (!mounted) return;
       setState(() {
         _currentLevel++;
-        _score = 0; // Reset punktów na nowym poziomie
+        // _score = 0; // Usunięto resetowanie punktów
         int newDurationMillis = (_currentWishDuration.inMilliseconds * 0.9).round();
         _currentWishDuration = Duration(milliseconds: max(1000, newDurationMillis));
         int foodCountForLevel = _calculateFoodCountForLevel(_currentLevel);
