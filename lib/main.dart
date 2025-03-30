@@ -601,14 +601,14 @@ class _HighScoresScreenState extends State<HighScoresScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Zmieniamy przycisk powrotu, aby wracał do Menu Głównego
         leading: IconButton(
-          icon: const Icon(Icons.menu), // Ikona menu zamiast strzałki
+          icon: const Icon(Icons.arrow_back), // Zmieniona ikona na strzałkę wstecz
           onPressed: () {
             Navigator.pushReplacement( // Wracamy do menu, zastępując ekran wyników
               context,
               MaterialPageRoute(builder: (context) => const MainMenuScreen()),
             );
           },
-          tooltip: 'Menu Główne',
+          tooltip: 'Wróć do Menu', // Zmieniony tooltip
         ),
       ),
       body: _highScores.isEmpty
