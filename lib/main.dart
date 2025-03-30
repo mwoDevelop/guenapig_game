@@ -253,7 +253,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       int timeBonus = (remainingTimeFraction * 10).round();
       int pointsEarned = 10 + timeBonus;
       int newScore = _score + pointsEarned;
-      bool leveledUp = newScore >= _scoreToLevelUp;
+      // Zmieniony warunek level up - sprawdza skumulowany próg dla danego poziomu
+      bool leveledUp = newScore >= (_currentLevel * _scoreToLevelUp);
       setState(() { _score = newScore; });
       print('Dobrze! Punkty: $_score (Bonus: $timeBonus)');
       if (leveledUp) { _levelUp(); }
@@ -308,7 +309,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final Size screenSize = MediaQuery.of(context).size;
     final double centerX = screenSize.width / 2;
     final double centerY = screenSize.height / 2;
-    final double orbitRadius = min(centerX, centerY) * 0.55;
+    final double orbitRadius = min(centerX, centerY) * 0.7; // Zwiększony promień orbity
     final double guineaPigSize = 70.0; // Rozmiar świnki (zmniejszony)
     final double patienceBarWidth = guineaPigSize * 0.8;
     final double patienceBarHeight = 8.0;
