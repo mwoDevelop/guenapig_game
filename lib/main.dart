@@ -360,7 +360,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final double centerX = screenSize.width / 2;
     final double centerY = screenSize.height / 2;
     final double orbitRadius = min(centerX, centerY) * 0.55;
-    final double guineaPigSize = 80.0; // Rozmiar świnki
+    final double guineaPigSize = 70.0; // Rozmiar świnki (zmniejszony)
     final double patienceBarWidth = guineaPigSize * 0.8; // Szerokość paska
     final double patienceBarHeight = 8.0; // Wysokość paska
 
@@ -427,11 +427,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                                   ),
                                 ],
                              ),
-                             child: Transform.rotate( // Obracamy tekst z powrotem
-                               angle: -pi / 2, // Obrót o -90 stopni
-                               child: Text(_currentWish!.emoji, style: const TextStyle(fontSize: 30)),
-                             ),
-                           ),
+                              child: Transform.rotate( // Obracamy tekst z powrotem
+                                angle: -pi / 2, // Obrót o -90 stopni
+                                child: Text(_currentWish!.emoji, style: const TextStyle(fontSize: 26)), // Zmniejszony rozmiar emoji
+                              ),
+                            ),
                           ),
                          ),
                       )
